@@ -1,11 +1,25 @@
 import React from "react";
 import Dice from "./Dice";
 import { nanoid } from "nanoid";
+import Tenzies from "./Tenzies";
 
 function App() {
+  // State to hold Tenzies component
+  const [show, setShow] = React.useState(false);
   // Update the array of numbers in state to be an array
   //of objects instead.
   const [allDice, setAllDice] = React.useState(allNewDice());
+
+  // Effect run everytime the dice state array changes
+  React.useEffect(() => {
+    const allHeld = allDice.every((dice) => dice.isHeld);
+    const firstValue = allDice[0].value;
+    const allSameValue = allDice.every((dice) => dice.value === firstValue);
+    if (allHeld && allSameValue) {
+      console.log("You WON!");
+      setShow(true);
+    }
+  }, [allDice]);
 
   // Generate number 1-6
   function generateNumber() {
@@ -47,6 +61,7 @@ function App() {
   const allDices = allDice.map((dice) => {
     return (
       <Dice
+        key={dice.id}
         isOn={dice.isHeld}
         handleClick={() => handleClick(dice.id)}
         number={dice.value}
@@ -56,6 +71,7 @@ function App() {
 
   return (
     <main className="main">
+      <div>{show && <Tenzies />}</div>
       <div className="main--container">{allDices}</div>
       <button onClick={rollDice} className="roll-dice">
         Roll
