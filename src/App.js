@@ -2,6 +2,7 @@ import React from "react";
 import Dice from "./Dice";
 import { nanoid } from "nanoid";
 import Tenzies from "./Tenzies";
+import Confetti from "react-confetti";
 
 function App() {
   // State to hold Tenzies component
@@ -41,11 +42,16 @@ function App() {
 
   //Roll button click function
   function rollDice() {
-    setAllDice((oldDice) =>
-      oldDice.map((dice) => {
-        return dice.isHeld ? dice : generateNumber();
-      })
-    );
+    if (!show) {
+      setAllDice((oldDice) =>
+        oldDice.map((dice) => {
+          return dice.isHeld ? dice : generateNumber();
+        })
+      );
+    } else {
+      setShow(false);
+      setAllDice(allNewDice());
+    }
   }
 
   // Handle Click dice and change color background
@@ -71,10 +77,14 @@ function App() {
 
   return (
     <main className="main">
-      <div>{show && <Tenzies />}</div>
+      <div>
+        {" "}
+        <Tenzies />{" "}
+      </div>
       <div className="main--container">{allDices}</div>
+      {show && <Confetti />}
       <button onClick={rollDice} className="roll-dice">
-        Roll
+        {show ? "New Game" : "Roll"}
       </button>
     </main>
   );
