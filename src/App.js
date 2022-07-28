@@ -3,28 +3,45 @@ import Dice from "./Dice";
 import { nanoid } from "nanoid";
 
 function App() {
+  // Update the array of numbers in state to be an array
+  //of objects instead.
+  const [allDice, setAllDice] = React.useState(allNewDice());
+
+  // Generate number 1-6
+  function generateNumber() {
+    return {
+      value: Math.ceil(Math.random() * 6),
+      isHeld: false,
+      id: nanoid(),
+    };
+  }
+
   //Generate number 1-6 and save it to new array
   function allNewDice() {
     const numberArray = [];
     for (let i = 0; i < 10; i++) {
-      numberArray.push({
-        value: Math.ceil(Math.random() * 6),
-        isHeld: false,
-        id: nanoid(),
-      });
+      numberArray.push(generateNumber());
     }
     return numberArray;
   }
 
-  // Update the array of numbers in state to be an array
-  //of objects instead.
+  //Roll button click function
+  function rollDice() {
+    setAllDice((oldDice) =>
+      oldDice.map((dice) => {
+        return dice.isHeld ? dice : generateNumber();
+      })
+    );
+  }
 
-  // State to hold the array
-  const [allDice, setAllDice] = React.useState(allNewDice());
-  //console.log(allNewDice());
-  //console.log(allDice);
-  const obj = Object.assign({}, allDice);
-  console.log(obj);
+  // Handle Click dice and change color background
+  function handleClick(id) {
+    setAllDice((prevDice) => {
+      return prevDice.map((dice) => {
+        return dice.id === id ? { ...dice, isHeld: !dice.isHeld } : dice;
+      });
+    });
+  }
 
   //Map through the array
   const allDices = allDice.map((dice) => {
@@ -36,20 +53,6 @@ function App() {
       />
     );
   });
-
-  //Roll button click function
-  function rollDice() {
-    setAllDice(allNewDice());
-  }
-
-  // Handle Click dice and change color background
-  function handleClick(id) {
-    setAllDice((prevDice) => {
-      return prevDice.map((dice) => {
-        return dice.id === id ? { ...dice, isHeld: !dice.isHeld } : dice;
-      });
-    });
-  }
 
   return (
     <main className="main">
